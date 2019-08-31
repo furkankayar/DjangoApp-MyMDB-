@@ -22,7 +22,13 @@ class MovieList(ListView):
     are fully documented.
     """
 
+    """
+    # NOTE: ListView has built-in support for pagination. Pagination is controlled
+    by the GET parameter page that controls which page to show.
+    """
     model = Movie
+    #paginate_by = 1
+
 
 class MovieDetail(DetailView):
 
