@@ -27,7 +27,7 @@ class MovieList(ListView):
     by the GET parameter page that controls which page to show.
     """
     model = Movie
-    #paginate_by = 1
+    paginate_by = 10
 
 
 class MovieDetail(DetailView):
