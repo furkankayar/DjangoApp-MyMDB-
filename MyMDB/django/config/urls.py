@@ -20,8 +20,11 @@ gets will get routed to the first view that matches a path inside this file
 (or a file urls.py reference).
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+
+import core.urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include(core.urls, namespace='core')),
 ]
