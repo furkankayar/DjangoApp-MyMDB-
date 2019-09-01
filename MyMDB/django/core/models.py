@@ -2,7 +2,17 @@ from django.db import models
 
 # Create your models here.
 
+class MovieManager(models.Manager):
+    def all_with_related_persons(self):
+        qs = self.get_queryset()
+        qs = qs.select_related('director')
+        qs = qs.prefetch_related('writers', 'actor')
+        return qs
+
+
 class Movie(models.Model):
+    objects = MovieManager()
+
     NOT_RATED = 0
     RATED_G = 1
     RATED_PG = 2
@@ -52,8 +62,26 @@ class Movie(models.Model):
     def __str__(self):
         return '{} ({})'.format(self.title, self.year)
 
+"""
+# NOTE: PersonDetail view will list all the movies in which a Person is acting,
+writing or directing credits. In our template, we will print out the name of each
+film in each credit(and Role.name for the acting credits).To avoid sending a
+flood of queries to the database, we will create new managers for our models that
+will return smarter QuerySet's.
+"""
+
+class PersonManager(models.Manager):
+    def all_with_prefetch_movies(self):
+        qs = self.get_queryset()
+        return qs.prefetch_related(
+            'directed',
+            'writing_credits',
+            'role_set__movie')
 
 class Person(models.Model):
+
+    objects = PersonManager()
+
     first_name = models.CharField(max_length=140)
     last_name = models.CharField(max_length=140)
     born = models.DateField()
