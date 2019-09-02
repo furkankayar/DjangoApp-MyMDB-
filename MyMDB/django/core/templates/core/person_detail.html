@@ -7,7 +7,9 @@
 
 {% block main %}
 <h1>{{ object }}</h1>
-<h2>Actor</h2>
+{% if object.role_set.all %}
+<h2>Acted</h2>
+{% endif %}
 <ul>
   {% for role in object.role_set.all %}
     <li>
@@ -18,7 +20,9 @@
     </li>
   {% endfor %}
 </ul>
-<h2>Writer</h2>
+{% if object.writing_credits.all %}
+<h2>Writed</h2>
+{% endif %}
 <ul>
   {% for movie in object.writing_credits.all %}
     <li>
@@ -28,12 +32,14 @@
     </li>
   {% endfor %}
 </ul>
-<h2>Director</h2>
+{% if object.directed.all %}
+<h2>Directed</h2>
+{% endif %}
 <ul>
 {% for movie in object.directed.all %}
   <li>
     <a href="{% url 'core:MovieDetail' movie.id %}">
-      {{ Movie }}
+      {{ movie }}
     </a>
   </li>
 {% endfor %}

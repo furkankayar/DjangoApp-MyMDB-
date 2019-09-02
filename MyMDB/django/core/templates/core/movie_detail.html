@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-  {{ object.title }} - {{ block.super }}
+  {{ object }} - {{ block.super }}
 {% endblock %}
 
 {% block main %}
@@ -9,6 +9,9 @@
 <p class="lead">
   {{ object.plot }}
 </p>
+{% if object.director %}
+  <p>Director: <a href="{% url 'core:PersonDetail' pk=object.director.id %}">{{ object.director }}</a></p>
+{% endif %}
 {% endblock %}
 
 {% block sidebar %}
@@ -17,5 +20,18 @@
     <span class="badge badge-primary">
       {{ object.get_rating_display }}
     </span>
+</div>
+<div>
+  {% if vote_form %}
+    <form method="post" action="{{ vote_form_url }}">
+      {% csrf_token %}
+      {{ vote_form.as_p }}
+      <button class="btn btn-primary">
+        Vote
+      </button>
+    </form>
+  {% else %}
+    <p>Login to vote for this movie</p>
+  {% endif %}
 </div>
 {% endblock %}

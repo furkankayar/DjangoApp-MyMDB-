@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 
 # Create your models here.
 
@@ -6,7 +7,7 @@ class MovieManager(models.Manager):
     def all_with_related_persons(self):
         qs = self.get_queryset()
         qs = qs.select_related('director')
-        qs = qs.prefetch_related('writers', 'actor')
+        qs = qs.prefetch_related('writers', 'actors')
         return qs
 
 
@@ -95,13 +96,13 @@ class Person(models.Model):
             return '{}, {} ({}-{})'.format(
                 self.last_name,
                 self.first_name,
-                self.born,
-                self.died)
+                self.born.year,
+                self.died.year)
 
         return '{}, {} ({})'.format(
             self.last_name,
             self.first_name,
-            self.born)
+            self.born.year)
 
 
 class Role(models.Model):
@@ -114,3 +115,37 @@ class Role(models.Model):
 
     class Meta:
         ordering = ('movie', 'person', 'name')
+
+
+class VoteManager(models.Manager):
+
+    def get_vote_or_unsaved_blank_vote(self, movie, user):
+        try:
+            return Vote.objects.get(movie=movie, user=user)
+        except Vote.DoesNotExist:
+            return Vote(movie=movie, user=user)
+
+
+class Vote(models.Model):
+
+    objects = VoteManager()
+
+    UP = 1
+    DOWN = -1
+    VALUE_CHOICES = (
+        (UP, "+1"),
+        (DOWN, "-1"),
+    )
+
+    value = models.SmallIntegerField(choices=VALUE_CHOICES)
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    voted_on = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ('user', 'movie')
+    """
+    # NOTE: unique_together attribute of Meta creates a unique constraint on the
+    table. A unique constraint will prevent two rows having the same value for
+    both user and movie, enforcing our rule of one vote per user per movie.
+    """
