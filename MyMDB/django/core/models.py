@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.db.models.aggregates import Sum
 
 # Create your models here.
 
@@ -10,6 +11,16 @@ class MovieManager(models.Manager):
         qs = qs.prefetch_related('writers', 'actors')
         return qs
 
+    def all_with_related_persons_and_score(self):
+        qs = self.all_with_related_persons()
+        qs = qs.annotate(score=Sum('vote__value'))
+        """
+        # NOTE: annotate turns our regular SQL query into an aggregate query,
+        adding the supplied aggregate operation's result to e new attribute
+        called score. Django abstracts most common SQL aggregate functions
+        into class representations, including Sum, Count and Average (and more). 
+        """
+        return qs
 
 class Movie(models.Model):
     objects = MovieManager()

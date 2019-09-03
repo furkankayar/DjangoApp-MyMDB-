@@ -44,10 +44,12 @@ class MovieDetail(DetailView):
     in content-heavy sites, as it is SEO friendly.
     """
     model = Movie
-    queryset = Movie.objects.all_with_related_persons()
+    queryset = Movie.objects.all_with_related_persons_and_score()
 
     def get_context_data(self, **kwargs):
+        
         ctx = super().get_context_data(**kwargs)
+
         if self.request.user.is_authenticated:
             vote = Vote.objects.get_vote_or_unsaved_blank_vote(
                 movie=self.object,

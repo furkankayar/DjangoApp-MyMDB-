@@ -10,7 +10,14 @@
   {{ object.plot }}
 </p>
 {% if object.director %}
-  <p>Director: <a href="{% url 'core:PersonDetail' pk=object.director.id %}">{{ object.director }}</a></p>
+  <h4>Directed by</h4>
+  <p><a href="{% url 'core:PersonDetail' pk=object.director.id %}">{{ object.director }}</a></p>
+{% endif %}
+{% if object.actors.all %}
+  <h4>Cast</h4>
+  {% for actor in object.actors.all %}
+    <p><a href="{% url 'core:PersonDetail' pk=actor.id %}">{{ actor }}</a></p>
+  {% endfor %}
 {% endif %}
 {% endblock %}
 
@@ -20,6 +27,11 @@
     <span class="badge badge-primary">
       {{ object.get_rating_display }}
     </span>
+</div>
+<div>
+  <h2>
+    Score: {{ object.score|default_if_none:"TBD" }}
+  </h2>
 </div>
 <div>
   {% if vote_form %}
