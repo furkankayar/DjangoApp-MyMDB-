@@ -17,12 +17,15 @@ a DJANGO_SETTINGS environment variable, this is where Django looks for settings 
 
 import os
 
-LOGIN_REDIRECT_URL = 'core:MovieList'
-LOGIN_URL = 'user:login'
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+LOGIN_REDIRECT_URL = 'core:MovieList'
+LOGIN_URL = 'user:login'
+MEDIA_URL = '/uploaded/'
+MEDIA_ROOT = os.path.join(BASE_DIR, '../media_root')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/

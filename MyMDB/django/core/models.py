@@ -1,6 +1,18 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.db.models.aggregates import Sum
+from uuid import uuid4
+from django.conf import settings
+from django.db import models
+
+def movie_directory_path_with_uuid(instance, filename):
+    return '{}/{}'.format(instance.movie_id, uuid4())
+
+class MovieImage(models.Model):
+    image = models.ImageField(upload_to=movie_directory_path_with_uuid)
+    uploaded = models.DateTimeField(auto_now_add=True)
+    movie = models.ForeignKey('Movie', on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
 # Create your models here.
 
@@ -18,7 +30,7 @@ class MovieManager(models.Manager):
         # NOTE: annotate turns our regular SQL query into an aggregate query,
         adding the supplied aggregate operation's result to e new attribute
         called score. Django abstracts most common SQL aggregate functions
-        into class representations, including Sum, Count and Average (and more). 
+        into class representations, including Sum, Count and Average (and more).
         """
         return qs
 
